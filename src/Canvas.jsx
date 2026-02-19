@@ -2,23 +2,24 @@ import React, {useRef, useEffect} from 'react'
 
 const Canvas = ({width, height, gap}) => {
 
+    const colums = 10
+    const rows = 2 * colums
     const canvasRef = useRef(null)
-    const gridsize = (width / 10 + 2 / gap)
+    const gridelementsize = (width - gap * (colums + 1)) / colums
     const speed = 1000
 
-    const grid = (ctx, canvas, gridsize) => {
+
+    const drawgrid = (ctx, canvas, C) => {
         ctx.fillStyle = '#000000'
         ctx.fillRect(0, 0, canvas.width, canvas.height)
 
-        for (let j = 0; j < 19; j++) {
-            let posY = gap + j * (gap + gridsize)
+        for (let j = 0; j !== rows; j++) {
+            let posY = gap + j * (gap + gridelementsize)
 
-            for (let x = 0; x < 10; x++) {
-                let posX = gap + x * (gap + gridsize)
+            for (let x = 0; x !== colums; x++) {
+                let posX = gap + x * (gap + gridelementsize)
                 ctx.fillStyle = '#303030'
-                ctx.fillRect(posX, posY, gridsize, gridsize)
-                console.log(gap)
-                console.log(posX)
+                ctx.fillRect(posX, posY, gridelementsize, gridelementsize)
             }
         }
     }
@@ -45,13 +46,13 @@ const Canvas = ({width, height, gap}) => {
         const canvas = canvasRef.current
         const ctx = canvas.getContext('2d')
 
-        grid(ctx, canvas)
+        drawgrid(ctx, canvas)
 
         let posY = 2
 
         function update() {
-            grid(ctx, canvas, gridsize)
-            oblock(ctx, gridsize, 3, posY)
+            drawgrid(ctx, canvas, gridelementsize)
+            oblock(ctx, gridelementsize, 3, posY)
             posY += 1;
         }
 

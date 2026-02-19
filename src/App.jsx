@@ -11,7 +11,7 @@ function App() {
         <>
             <Canvas
                 width={canvaswidth}
-                height={canvaswidth * 2 - gap * 2}
+                height={canvaswidth * 2 - gap}
                 gap={gap}
             />
         </>
