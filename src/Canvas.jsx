@@ -7,9 +7,11 @@ const Canvas = ({width, height, gap}) => {
     const canvasRef = useRef(null)
     const gridelementsize = (width - gap * (colums + 1)) / colums
     const speed = 1000
+    const gridRef = useRef(Array.from({length: rows}, () => Array(colums).fill(0)));
+    const grid = gridRef.current;
 
 
-    const drawgrid = (ctx, canvas, C) => {
+    const drawbackground = (ctx, canvas) => {
         ctx.fillStyle = '#000000'
         ctx.fillRect(0, 0, canvas.width, canvas.height)
 
@@ -24,36 +26,65 @@ const Canvas = ({width, height, gap}) => {
         }
     }
 
-    const block = (ctx, gridsize, posX, posY, priColor, secColor) => {
-        const gridposX = posX * (gridsize + gap);
-        const gridposY = posY * (gridsize + gap);
-        ctx.fillStyle = secColor
-        ctx.fillRect(gridposX, gridposY, gridsize + 2 * gap, gridsize + 2 * gap)
-        ctx.fillStyle = priColor
-        ctx.fillRect(gridposX + gap, gridposY + gap, gridsize, gridsize)
+    const drawgrid = (ctx, gridsize) => {
+
+        grid.forEach((row, posY) => {
+            row.forEach((colorcode, posX) => {
+                let priColor, secColor
+                if (colorcode === 0) {
+                    return
+                }
+                if (colorcode === 1) {
+                    priColor = "#4ddd3b"
+                    secColor = "#004e00"
+                }
+                if (colorcode === 2) {
+                    priColor = "#ff0000"
+                    secColor = "#8a0000"
+                }
+
+                const gridposX = posX * (gridsize + gap);
+                const gridposY = posY * (gridsize + gap);
+                ctx.fillStyle = secColor
+                ctx.fillRect(gridposX, gridposY, gridsize + 2 * gap, gridsize + 2 * gap)
+                ctx.fillStyle = priColor
+                ctx.fillRect(gridposX + gap, gridposY + gap, gridsize, gridsize)
+            })
+        })
     }
 
-    const oblock = (ctx, gridsize, posX, posY) => {
-        const priColor = "#4ddd3b"
-        const secColor = "#004e00"
-        block(ctx, gridsize, posX, posY, priColor, secColor)
-        block(ctx, gridsize, posX + 1, posY, priColor, secColor)
-        block(ctx, gridsize, posX, posY + 1, priColor, secColor)
-        block(ctx, gridsize, posX + 1, posY + 1, priColor, secColor)
+
+    const oblock = (posX, posY, draw) => {
+        let colorcode;
+
+        if (draw) {
+            colorcode = 2;
+        } else {
+            colorcode = 0;
+        }
+
+        grid[posY][posX] = colorcode;
+        grid[posY][posX + 1] = colorcode;
+        grid[posY + 1][posX] = colorcode;
+        grid[posY + 1][posX + 1] = colorcode;
     }
+
 
     useEffect(() => {
         const canvas = canvasRef.current
         const ctx = canvas.getContext('2d')
 
-        drawgrid(ctx, canvas)
+        drawbackground(ctx, canvas)
 
         let posY = 2
 
         function update() {
-            drawgrid(ctx, canvas, gridelementsize)
-            oblock(ctx, gridelementsize, 3, posY)
+            oblock(1, posY, false)
             posY += 1;
+            oblock(1, posY, true)
+            console.log(JSON.stringify(grid))
+            drawbackground(ctx, canvas, gridelementsize)
+            drawgrid(ctx, gridelementsize)
         }
 
         setInterval(update, speed)
