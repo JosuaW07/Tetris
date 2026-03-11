@@ -2,7 +2,7 @@ import React, {useEffect, useRef} from 'react'
 
 const Canvas = ({width, height, gap}) => {
 
-    const colums = 14
+    const colums = 10
     const rows = 2 * colums
     const canvasRef = useRef(null)
     const gridelementsize = (width - gap * (colums + 1)) / colums
@@ -12,11 +12,11 @@ const Canvas = ({width, height, gap}) => {
     const posYRef = useRef(0)
 
     const tshape = [
+        {y: -1, x: -1},
+        {y: -1, x: 0},
+        {y: -1, x: 1},
         {y: 0, x: 0},
-        {y: 0, x: 1},
-        {y: 0, x: 2},
-        {y: 1, x: 1},
-        {y: 2, x: 1}
+        {y: 1, x: 0}
     ]
 
     const oshape = [
@@ -76,10 +76,12 @@ const Canvas = ({width, height, gap}) => {
     }
 
     const controllingblock = (draw) => {
-
         blockcoloring(draw).forEach((coordinate) => {
-            grid[coordinate.y][coordinate.x] = coordinate.color
+            if (grid[coordinate.y] !== undefined) {
+                grid[coordinate.y][coordinate.x] = coordinate.color
+            }
         })
+
     }
 
 
