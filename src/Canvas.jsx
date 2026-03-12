@@ -9,7 +9,7 @@ const Canvas = ({width, height, gap}) => {
     const gridRef = useRef(Array.from({length: rows}, () => Array(colums).fill(0)));
     const grid = gridRef.current;
     const posXRef = useRef(5)
-    const posYRef = useRef(0)
+    const posYRef = useRef(-3)
 
     const tshape = [
         {y: -1, x: -1},
@@ -27,11 +27,6 @@ const Canvas = ({width, height, gap}) => {
     ]
 
     const currentshapeRef = useRef(tshape)
-
-
-
-
-
 
     const drawbackground = (ctx, canvas) => {
         ctx.fillStyle = '#000000'
@@ -75,34 +70,26 @@ const Canvas = ({width, height, gap}) => {
         })
     }
 
-    const controllingblock = (draw) => {
-        blockcoloring(draw).forEach((coordinate) => {
+    const blockcoloring = (isDrawing) => {
+
+        const colorCode = isDrawing ? 2 : 0;
+
+        currentcoordinates().forEach((coordinate) => {
             if (grid[coordinate.y] !== undefined) {
-                grid[coordinate.y][coordinate.x] = coordinate.color
+                grid[coordinate.y][coordinate.x] = colorCode
             }
         })
 
     }
 
-
-    const blockcoloring = (isDrawing,) => {
-        const colorCode = isDrawing ? 2 : 0;
-
-        return currentshapeRef.current.map(block => ({
-            x: block.x + posXRef.current,
-            y: block.y + posYRef.current,
-            color: colorCode
-        }));
+    const moveBlock = (sidemovement, downmovement) => {
+        blockcoloring(false)
+        posXRef.current += sidemovement;
+        posYRef.current += downmovement;
     }
-
-    const moveBlock = (direction) => {
-        controllingblock(false)
-        posXRef.current += direction;
-    }
-
 
     const rotateShape = () => {
-        controllingblock(false)
+        blockcoloring(false)
         console.log("rotated")
 
         currentshapeRef.current = currentshapeRef.current.map(block => ({
@@ -110,6 +97,14 @@ const Canvas = ({width, height, gap}) => {
                 y: block.x
             })
         );
+    }
+
+    const currentcoordinates = () => {
+        return currentshapeRef.current.map(block => ({
+            x: block.x + posXRef.current,
+            y: block.y + posYRef.current,
+            color: 2
+        }));
     }
 
 
@@ -131,14 +126,14 @@ const Canvas = ({width, height, gap}) => {
 
             accumulatorslow += deltatime;
 
-            controllingblock(false)
+            blockcoloring(false)
 
             if (accumulatorslow > slowinterval) {
                 posYRef.current += 1;
                 accumulatorslow -= slowinterval;
             }
 
-            controllingblock(true)
+            blockcoloring(true)
             drawbackground(ctx, canvas, gridelementsize)
             drawgrid(ctx, gridelementsize)
 
@@ -154,9 +149,10 @@ const Canvas = ({width, height, gap}) => {
     }, [])
     useEffect(() => {
         const handleKey = (e) => {
-            if (e.key.toLowerCase() === "a") moveBlock(-1);
-            if (e.key.toLowerCase() === "d") moveBlock(+1);
-            if (e.key === " ") rotateShape();
+            if (e.key.toLowerCase() === "a") moveBlock(-1, 0);
+            if (e.key.toLowerCase() === "d") moveBlock(+1, 0);
+            if (e.key === " " || e.key.toLowerCase() === "w") rotateShape();
+            if (e.key.toLowerCase() === "s") moveBlock(0, +1)
         };
 
         window.addEventListener('keydown', handleKey);
