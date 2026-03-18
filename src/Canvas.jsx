@@ -36,8 +36,37 @@ const Canvas = ({width, height, gap}) => {
         {y: 0, x: 0},
         {y: +1, x: 0},
     ]
+
+    const lshape = [
+        {y: -1, x: 0},
+        {y: 0, x: 0},
+        {y: 1, x: 0},
+        {y: 1, x: 1}
+    ];
+
+    const jshape = [
+        {y: -1, x: 0},
+        {y: 0, x: 0},
+        {y: 1, x: 0},
+        {y: 1, x: -1}
+    ];
+
+    const sshape = [
+        {y: 0, x: 0},
+        {y: 0, x: 1},
+        {y: 1, x: 0},
+        {y: 1, x: -1}
+    ];
+
+    const zshape = [
+        {y: 0, x: 0},
+        {y: 0, x: -1},
+        {y: 1, x: 0},
+        {y: 1, x: 1}
+    ];
+
     const currentshapeRef = useRef(ishape)
-    const shapes = [oshape, tshape, ishape]
+    const shapes = [oshape, tshape, ishape, lshape, jshape, sshape, zshape]
 
     const drawbackground = (ctx, canvas) => {
         ctx.fillStyle = '#000000'
@@ -63,16 +92,32 @@ const Canvas = ({width, height, gap}) => {
                     return
                 }
                 if (colorcode === 1) {
-                    priColor = "#4ddd3b"
-                    secColor = "#004e00"
+                    priColor = "#fae827"
+                    secColor = "#a59805"
                 }
                 if (colorcode === 2) {
-                    priColor = "#ff0000"
-                    secColor = "#8a0000"
+                    priColor = "#a608ff"
+                    secColor = "#5d058e"
                 }
                 if (colorcode === 3) {
                     priColor = "#0dd1b0"
                     secColor = "#1d6ff4"
+                }
+                if (colorcode === 4) {
+                    priColor = "#edaa05"
+                    secColor = "#b5780f"
+                }
+                if (colorcode === 5) {
+                    priColor = "#0d45d1"
+                    secColor = "#020e8e"
+                }
+                if (colorcode === 6) {
+                    priColor = "#53ff00"
+                    secColor = "#004e00"
+                }
+                if (colorcode === 7) {
+                    priColor = "#ff0000"
+                    secColor = "#8a0000"
                 }
 
                 const gridposX = posX * (gridsize + gap);
