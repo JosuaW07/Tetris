@@ -27,7 +27,14 @@ const Canvas = ({width, height, gap}) => {
         {y: 1, x: 1},
     ]
 
-    const currentshapeRef = useRef(tshape)
+    const ishape = [
+        {y: -2, x: 0},
+        {y: -1, x: 0},
+        {y: 0, x: 0},
+        {y: +1, x: 0},
+    ]
+
+    const currentshapeRef = useRef(ishape)
 
     const drawbackground = (ctx, canvas) => {
         ctx.fillStyle = '#000000'
@@ -84,14 +91,27 @@ const Canvas = ({width, height, gap}) => {
     }
 
     const moveBlock = (sidemovement, downmovement, newShape = currentshapeRef.current) => {
-        blockcoloring(false)
+        if (ismovevalide(sidemovement, downmovement, newShape)) {
+            posXRef.current += sidemovement;
+            posYRef.current += downmovement;
+            currentshapeRef.current = newShape;
+        }
+        if (downmovement > 0) {
 
-        posXRef.current += sidemovement;
-        posYRef.current += downmovement;
-        currentshapeRef.current = newShape
+        }
     }
 
-    const ismovevalide = () => {
+    const ismovevalide = (sidemovement, downmovement, newShape) => {
+        blockcoloring(false)
+
+        const isvalide = newShape.every(block => {
+            const x = block.x + posXRef.current + sidemovement
+            const y = block.y + posYRef.current + downmovement
+            return (x >= 0 && x < colums && y < rows && (y < 0 || grid[y][x] === 0)
+            )
+        })
+
+        return isvalide
 
     }
 
