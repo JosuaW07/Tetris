@@ -12,6 +12,7 @@ const Canvas = ({width, height, gap}) => {
     const posXRef = useRef(5)
     const posYRef = useRef(-3)
 
+
     const tshape = [
         {y: -1, x: -1},
         {y: -1, x: 0},
@@ -33,8 +34,8 @@ const Canvas = ({width, height, gap}) => {
         {y: 0, x: 0},
         {y: +1, x: 0},
     ]
-
     const currentshapeRef = useRef(ishape)
+    const shapes = [tshape, oshape, ishape]
 
     const drawbackground = (ctx, canvas) => {
         ctx.fillStyle = '#000000'
@@ -91,18 +92,19 @@ const Canvas = ({width, height, gap}) => {
     }
 
     const moveBlock = (sidemovement, downmovement, newShape = currentshapeRef.current) => {
+        blockcoloring(false)
         if (ismovevalide(sidemovement, downmovement, newShape)) {
             posXRef.current += sidemovement;
             posYRef.current += downmovement;
             currentshapeRef.current = newShape;
+        } else if (downmovement > 0) {
+            blockcoloring(true)
+            changeblock()
         }
-        if (downmovement > 0) {
-
-        }
+        blockcoloring(true)
     }
 
     const ismovevalide = (sidemovement, downmovement, newShape) => {
-        blockcoloring(false)
 
         const isvalide = newShape.every(block => {
             const x = block.x + posXRef.current + sidemovement
@@ -113,6 +115,12 @@ const Canvas = ({width, height, gap}) => {
 
         return isvalide
 
+    }
+
+    const changeblock = () => {
+        currentshapeRef.current = shapes[(Math.floor(Math.random() * shapes.length))]
+        posYRef.current = -3;
+        posXRef.current = 5;
     }
 
     const rotateShape = () => {
@@ -155,14 +163,12 @@ const Canvas = ({width, height, gap}) => {
 
             accumulatorslow += deltatime;
 
-            blockcoloring(false)
 
             if (accumulatorslow > slowinterval) {
                 moveBlock(0, 1)
                 accumulatorslow -= slowinterval;
             }
 
-            blockcoloring(true)
             drawbackground(ctx, canvas, gridelementsize)
             drawgrid(ctx, gridelementsize)
 
