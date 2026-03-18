@@ -95,19 +95,19 @@ const Canvas = ({width, height, gap}) => {
                     secColor = "#a59805"
                 }
                 if (colorcode === 2) {
-                    priColor = "#a608ff"
-                    secColor = "#5d058e"
+                    priColor = "#b128ff"
+                    secColor = "#670280"
                 }
                 if (colorcode === 3) {
                     priColor = "#0dd1b0"
                     secColor = "#1d6ff4"
                 }
                 if (colorcode === 4) {
-                    priColor = "#edaa05"
+                    priColor = "#f8c700"
                     secColor = "#b5780f"
                 }
                 if (colorcode === 5) {
-                    priColor = "#0d45d1"
+                    priColor = "#2462ff"
                     secColor = "#020e8e"
                 }
                 if (colorcode === 6) {
@@ -186,16 +186,18 @@ const Canvas = ({width, height, gap}) => {
     }
 
     const rotateShape = () => {
-        blockcoloring(false)
-        console.log("rotated")
+        if (currentshapeRef.current !== oshape) {
+            blockcoloring(false)
+            console.log("rotated")
 
-        const rotated = currentshapeRef.current.map(block => ({
-                x: -block.y,
-                y: block.x
-            })
-        );
+            const rotated = currentshapeRef.current.map(block => ({
+                    x: -block.y,
+                    y: block.x
+                })
+            );
 
-        moveBlock(0, 0, rotated);
+            moveBlock(0, 0, rotated);
+        }
     }
 
     const currentcoordinates = () => {
