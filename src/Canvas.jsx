@@ -10,6 +10,9 @@ const Canvas = ({width, height, gap}) => {
 
     const posXRef = useRef(5)
     const posYRef = useRef(-3)
+    const colorcodeRef = useRef(1)
+
+
 
 
     const tshape = [
@@ -34,7 +37,7 @@ const Canvas = ({width, height, gap}) => {
         {y: +1, x: 0},
     ]
     const currentshapeRef = useRef(ishape)
-    const shapes = [tshape, oshape, ishape]
+    const shapes = [oshape, tshape, ishape]
 
     const drawbackground = (ctx, canvas) => {
         ctx.fillStyle = '#000000'
@@ -67,6 +70,10 @@ const Canvas = ({width, height, gap}) => {
                     priColor = "#ff0000"
                     secColor = "#8a0000"
                 }
+                if (colorcode === 3) {
+                    priColor = "#0dd1b0"
+                    secColor = "#1d6ff4"
+                }
 
                 const gridposX = posX * (gridsize + gap);
                 const gridposY = posY * (gridsize + gap);
@@ -80,7 +87,7 @@ const Canvas = ({width, height, gap}) => {
 
     const blockcoloring = (isDrawing) => {
 
-        const colorCode = isDrawing ? 2 : 0;
+        const colorCode = isDrawing ? colorcodeRef.current : 0;
 
         currentcoordinates().forEach((coordinate) => {
             if (gridRef.current[coordinate.y] !== undefined) {
@@ -125,9 +132,13 @@ const Canvas = ({width, height, gap}) => {
     }
 
     const changeblock = () => {
-        currentshapeRef.current = shapes[(Math.floor(Math.random() * shapes.length))]
+        const randomindex = (Math.floor(Math.random() * shapes.length))
+        currentshapeRef.current = shapes[randomindex]
         posYRef.current = -3;
         posXRef.current = 5;
+        colorcodeRef.current = randomindex + 1;
+
+
     }
 
     const rotateShape = () => {
@@ -153,6 +164,7 @@ const Canvas = ({width, height, gap}) => {
 
 
     useEffect(() => {
+        changeblock()
         const canvas = canvasRef.current
         const ctx = canvas.getContext('2d')
         let animationId;
