@@ -7,7 +7,6 @@ const Canvas = ({width, height, gap}) => {
     const canvasRef = useRef(null)
     const gridelementsize = (width - gap * (colums + 1)) / colums
     const gridRef = useRef(Array.from({length: rows}, () => Array(colums).fill(0)));
-    const grid = gridRef.current;
 
     const posXRef = useRef(5)
     const posYRef = useRef(-3)
@@ -54,7 +53,7 @@ const Canvas = ({width, height, gap}) => {
 
     const drawgrid = (ctx, gridsize) => {
 
-        grid.forEach((row, posY) => {
+        gridRef.current.forEach((row, posY) => {
             row.forEach((colorcode, posX) => {
                 let priColor, secColor
                 if (colorcode === 0) {
@@ -84,8 +83,8 @@ const Canvas = ({width, height, gap}) => {
         const colorCode = isDrawing ? 2 : 0;
 
         currentcoordinates().forEach((coordinate) => {
-            if (grid[coordinate.y] !== undefined) {
-                grid[coordinate.y][coordinate.x] = colorCode
+            if (gridRef.current[coordinate.y] !== undefined) {
+                gridRef.current[coordinate.y][coordinate.x] = colorCode
             }
         })
 
@@ -99,6 +98,7 @@ const Canvas = ({width, height, gap}) => {
             currentshapeRef.current = newShape;
         } else if (downmovement > 0) {
             blockcoloring(true)
+            checkgrid()
             changeblock()
         }
         blockcoloring(true)
@@ -109,12 +109,19 @@ const Canvas = ({width, height, gap}) => {
         const isvalide = newShape.every(block => {
             const x = block.x + posXRef.current + sidemovement
             const y = block.y + posYRef.current + downmovement
-            return (x >= 0 && x < colums && y < rows && (y < 0 || grid[y][x] === 0)
+            return (x >= 0 && x < colums && y < rows && (y < 0 || gridRef.current[y][x] === 0)
             )
         })
 
         return isvalide
 
+    }
+    const checkgrid = () => {
+        const newgrid = gridRef.current.filter(row => row.some(coordinate => coordinate === 0))
+        const removedrows = rows - newgrid.length
+        const emmtyrows = Array.from({length: removedrows}, () => Array(colums).fill(0))
+
+        gridRef.current = [...emmtyrows, ...newgrid]
     }
 
     const changeblock = () => {
