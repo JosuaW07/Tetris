@@ -8,6 +8,7 @@ const Canvas = ({width, height, gap}) => {
     const gridelementsize = (width - gap * (colums + 1)) / colums
     const gridRef = useRef(Array.from({length: rows}, () => Array(colums).fill(0)));
     const grid = gridRef.current;
+
     const posXRef = useRef(5)
     const posYRef = useRef(-3)
 
@@ -82,21 +83,29 @@ const Canvas = ({width, height, gap}) => {
 
     }
 
-    const moveBlock = (sidemovement, downmovement) => {
+    const moveBlock = (sidemovement, downmovement, newShape = currentshapeRef.current) => {
         blockcoloring(false)
+
         posXRef.current += sidemovement;
         posYRef.current += downmovement;
+        currentshapeRef.current = newShape
+    }
+
+    const ismovevalide = () => {
+
     }
 
     const rotateShape = () => {
         blockcoloring(false)
         console.log("rotated")
 
-        currentshapeRef.current = currentshapeRef.current.map(block => ({
+        const rotated = currentshapeRef.current.map(block => ({
                 x: -block.y,
                 y: block.x
             })
         );
+
+        moveBlock(0, 0, rotated);
     }
 
     const currentcoordinates = () => {
@@ -129,7 +138,7 @@ const Canvas = ({width, height, gap}) => {
             blockcoloring(false)
 
             if (accumulatorslow > slowinterval) {
-                posYRef.current += 1;
+                moveBlock(0, 1)
                 accumulatorslow -= slowinterval;
             }
 
