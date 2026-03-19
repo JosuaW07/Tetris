@@ -6,11 +6,17 @@ const Canvas = ({width, height, gap}) => {
     const rows = 2 * colums
     const canvasRef = useRef(null)
     const gridelementsize = (width - gap * (colums + 1)) / colums
-    const gridRef = useRef(Array.from({length: rows}, () => Array(colums).fill(0)));
 
-    const posXRef = useRef(5)
-    const posYRef = useRef(-3)
-    const colorcodeRef = useRef(1)
+    const initialGrid = Array.from({length: rows}, () => Array(colums).fill(0))
+    const gridRef = useRef(initialGrid);
+
+    const initialPosX = 5;
+    const initialPosY = -3;
+
+
+    const posXRef = useRef(initialPosX)
+    const posYRef = useRef(initialPosY)
+    const colorcodeRef = useRef(null)
 
 
 
@@ -150,9 +156,21 @@ const Canvas = ({width, height, gap}) => {
         } else if (downmovement > 0) {
             blockcoloring(true)
             checkgrid()
-            changeblock()
+            if (currentcoordinates().some(coordinate => coordinate.y <= 0)) {
+                gameover()
+                changeblock()
+            } else {
+                changeblock()
+            }
         }
         blockcoloring(true)
+    }
+
+    const gameover = () => {
+        console.log("gameover")
+        posXRef.current = initialPosX;
+        posYRef.current = initialPosY;
+        gridRef.current = initialGrid.map(row => [...row]);
     }
 
     const ismovevalide = (sidemovement, downmovement, newShape) => {
