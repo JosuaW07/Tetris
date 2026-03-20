@@ -1,14 +1,15 @@
-import React, {useEffect, useRef} from 'react'
+import React, {useEffect, useRef, useState} from 'react'
+
+const initialGrid = (rows, columns) => Array.from({length: rows}, () => Array(columns).fill(0))
 
 const Canvas = ({width, height, gap}) => {
 
-    const colums = 10
-    const rows = 2 * colums
+    const columns = 10
+    const rows = 2 * columns
     const canvasRef = useRef(null)
-    const gridelementsize = (width - gap * (colums + 1)) / colums
+    const gridelementsize = (width - gap * (columns + 1)) / columns
 
-    const initialGrid = Array.from({length: rows}, () => Array(colums).fill(0))
-    const gridRef = useRef(initialGrid);
+    const gridRef = useRef(initialGrid(rows, columns));
 
     const initialPosX = 5;
     const initialPosY = -3;
@@ -17,6 +18,8 @@ const Canvas = ({width, height, gap}) => {
     const posXRef = useRef(initialPosX)
     const posYRef = useRef(initialPosY)
     const colorcodeRef = useRef(null)
+
+    const [score, setScore] = useState(0)
 
 
 
@@ -80,7 +83,7 @@ const Canvas = ({width, height, gap}) => {
         for (let j = 0; j !== rows; j++) {
             let posY = gap + j * (gap + gridelementsize)
 
-            for (let x = 0; x !== colums; x++) {
+            for (let x = 0; x !== columns; x++) {
                 let posX = gap + x * (gap + gridelementsize)
                 ctx.fillStyle = '#303030'
                 ctx.fillRect(posX, posY, gridelementsize, gridelementsize)
@@ -167,10 +170,9 @@ const Canvas = ({width, height, gap}) => {
     }
 
     const gameover = () => {
-        console.log("gameover")
         posXRef.current = initialPosX;
         posYRef.current = initialPosY;
-        gridRef.current = initialGrid.map(row => [...row]);
+        gridRef.current = initialGrid(rows, columns);
     }
 
     const ismovevalide = (sidemovement, downmovement, newShape) => {
@@ -178,7 +180,7 @@ const Canvas = ({width, height, gap}) => {
         const isvalide = newShape.every(block => {
             const x = block.x + posXRef.current + sidemovement
             const y = block.y + posYRef.current + downmovement
-            return (x >= 0 && x < colums && y < rows && (y < 0 || gridRef.current[y][x] === 0)
+            return (x >= 0 && x < columns && y < rows && (y < 0 || gridRef.current[y][x] === 0)
             )
         })
 
@@ -187,11 +189,23 @@ const Canvas = ({width, height, gap}) => {
     }
     const checkgrid = () => {
         const newgrid = gridRef.current.filter(row => row.some(coordinate => coordinate === 0))
-        const removedrows = rows - newgrid.length
-        const emmtyrows = Array.from({length: removedrows}, () => Array(colums).fill(0))
+        if (newgrid.length < rows) {
+            const removedrows = rows - newgrid.length
+            calcScore(removedrows)
+            const emmtyrows = Array.from({length: removedrows}, () => Array(columns).fill(0))
 
-        gridRef.current = [...emmtyrows, ...newgrid]
+            gridRef.current = [...emmtyrows, ...newgrid]
+        }
     }
+    const points = [0, 40, 100, 300, 1200]
+    const calcScore = (removedrows) => {
+        setScore(prev => prev + points[removedrows])
+    }
+
+    //Temp
+    useEffect(() => {
+        console.log(score);
+    }, [score]);
 
     const changeblock = () => {
         const randomindex = (Math.floor(Math.random() * shapes.length))
@@ -206,8 +220,6 @@ const Canvas = ({width, height, gap}) => {
     const rotateShape = () => {
         if (currentshapeRef.current !== oshape) {
             blockcoloring(false)
-            console.log("rotated")
-
             const rotated = currentshapeRef.current.map(block => ({
                     x: -block.y,
                     y: block.x
