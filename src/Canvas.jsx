@@ -2,7 +2,7 @@ import React, {use, useEffect, useRef, useState} from 'react'
 
 const initialGrid = (rows, columns) => Array.from({length: rows}, () => Array(columns).fill(0))
 
-const Canvas = ({width, height, gap, UpdateScore, UpdateLevel}) => {
+const Canvas = ({width, height, gap, UpdateScore, UpdateLevel, CurrentLevel}) => {
 
     const columns = 10
     const rows = 2 * columns
@@ -20,6 +20,10 @@ const Canvas = ({width, height, gap, UpdateScore, UpdateLevel}) => {
     const colorcodeRef = useRef(null)
 
     const removedrows = useRef(0)
+    const levelRef = useRef(CurrentLevel)
+    useEffect(() => {
+        levelRef.current = CurrentLevel;
+    }, [CurrentLevel]);
 
     const tshape = [
         {y: -1, x: 0},
@@ -199,7 +203,7 @@ const Canvas = ({width, height, gap, UpdateScore, UpdateLevel}) => {
 
     const pointsperrow = [0, 40, 100, 300, 1200]
     const calcScore = (removedrows) => {
-        const points = pointsperrow[removedrows]
+        const points = pointsperrow[removedrows] * (levelRef.current + 1)
         UpdateScore(score => score + points)
     }
 

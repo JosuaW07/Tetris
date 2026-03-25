@@ -28,6 +28,7 @@ function App() {
                 gap={gap}
                 UpdateScore={setScore}
                 UpdateLevel={setLevel}
+                CurrentLevel={level}
             />
         </>
     )
