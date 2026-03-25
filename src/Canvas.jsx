@@ -2,7 +2,7 @@ import React, {useEffect, useRef, useState} from 'react'
 
 const initialGrid = (rows, columns) => Array.from({length: rows}, () => Array(columns).fill(0))
 
-const Canvas = ({width, height, gap}) => {
+const Canvas = ({width, height, gap, UpdateScore}) => {
 
     const columns = 10
     const rows = 2 * columns
@@ -19,7 +19,6 @@ const Canvas = ({width, height, gap}) => {
     const posYRef = useRef(initialPosY)
     const colorcodeRef = useRef(null)
 
-    const [score, setScore] = useState(0)
 
 
 
@@ -173,6 +172,7 @@ const Canvas = ({width, height, gap}) => {
         posXRef.current = initialPosX;
         posYRef.current = initialPosY;
         gridRef.current = initialGrid(rows, columns);
+        UpdateScore(0);
     }
 
     const ismovevalide = (sidemovement, downmovement, newShape) => {
@@ -197,15 +197,11 @@ const Canvas = ({width, height, gap}) => {
             gridRef.current = [...emmtyrows, ...newgrid]
         }
     }
-    const points = [0, 40, 100, 300, 1200]
+    const pointsperrow = [0, 40, 100, 300, 1200]
     const calcScore = (removedrows) => {
-        setScore(prev => prev + points[removedrows])
+        const points = pointsperrow[removedrows]
+        UpdateScore(score => score + points)
     }
-
-    //Temp
-    useEffect(() => {
-        console.log(score);
-    }, [score]);
 
     const changeblock = () => {
         const randomindex = (Math.floor(Math.random() * shapes.length))
@@ -213,8 +209,6 @@ const Canvas = ({width, height, gap}) => {
         posYRef.current = -3;
         posXRef.current = 5;
         colorcodeRef.current = randomindex + 1;
-
-
     }
 
     const rotateShape = () => {
