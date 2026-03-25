@@ -1,8 +1,8 @@
-import React, {useEffect, useRef, useState} from 'react'
+import React, {use, useEffect, useRef, useState} from 'react'
 
 const initialGrid = (rows, columns) => Array.from({length: rows}, () => Array(columns).fill(0))
 
-const Canvas = ({width, height, gap, UpdateScore}) => {
+const Canvas = ({width, height, gap, UpdateScore, UpdateLevel}) => {
 
     const columns = 10
     const rows = 2 * columns
@@ -19,9 +19,7 @@ const Canvas = ({width, height, gap, UpdateScore}) => {
     const posYRef = useRef(initialPosY)
     const colorcodeRef = useRef(null)
 
-
-
-
+    const removedrows = useRef(0)
 
     const tshape = [
         {y: -1, x: 0},
@@ -192,15 +190,26 @@ const Canvas = ({width, height, gap, UpdateScore}) => {
         if (newgrid.length < rows) {
             const removedrows = rows - newgrid.length
             calcScore(removedrows)
+            calcLevel(removedrows)
             const emmtyrows = Array.from({length: removedrows}, () => Array(columns).fill(0))
 
             gridRef.current = [...emmtyrows, ...newgrid]
         }
     }
+
     const pointsperrow = [0, 40, 100, 300, 1200]
     const calcScore = (removedrows) => {
         const points = pointsperrow[removedrows]
         UpdateScore(score => score + points)
+    }
+
+    const calcLevel = (newremovedrows) => {
+        removedrows.current += newremovedrows;
+        if (removedrows.current > 10) {
+            UpdateLevel(level => level + 1)
+            removedrows.current -= newremovedrows;
+        }
+        console.log("updatecount", removedrows.current)
     }
 
     const changeblock = () => {
