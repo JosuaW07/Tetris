@@ -14,6 +14,9 @@ const Canvas = ({width, height, gap, UpdateScore, UpdateLevel, CurrentLevel}) =>
     const initialPosX = 5;
     const initialPosY = -3;
 
+    let lasttime = 0;
+    let accumulator = 0;
+    let interval = 1000;
 
     const posXRef = useRef(initialPosX)
     const posYRef = useRef(initialPosY)
@@ -175,6 +178,7 @@ const Canvas = ({width, height, gap, UpdateScore, UpdateLevel, CurrentLevel}) =>
         posYRef.current = initialPosY;
         gridRef.current = initialGrid(rows, columns);
         UpdateScore(0);
+        UpdateLevel(0)
     }
 
     const ismovevalide = (sidemovement, downmovement, newShape) => {
@@ -211,6 +215,7 @@ const Canvas = ({width, height, gap, UpdateScore, UpdateLevel, CurrentLevel}) =>
         removedrows.current += newremovedrows;
         if (removedrows.current > 10) {
             UpdateLevel(level => level + 1)
+
             removedrows.current -= newremovedrows;
         }
         console.log("updatecount", removedrows.current)
@@ -254,21 +259,18 @@ const Canvas = ({width, height, gap, UpdateScore, UpdateLevel, CurrentLevel}) =>
 
         drawbackground(ctx, canvas)
 
-        let lasttime = 0;
-        let accumulatorslow = 0;
-        const slowinterval = 1000;
 
         function update(currentTime) {
             if (!lasttime) lasttime = currentTime;
             let deltatime = (currentTime - lasttime);
             lasttime = currentTime;
 
-            accumulatorslow += deltatime;
+            accumulator += deltatime;
 
 
-            if (accumulatorslow > slowinterval) {
+            if (accumulator > interval) {
                 moveBlock(0, 1)
-                accumulatorslow -= slowinterval;
+                accumulator -= interval;
             }
 
             drawbackground(ctx, canvas, gridelementsize)
