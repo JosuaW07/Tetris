@@ -12,10 +12,8 @@ const Canvas = ({width, height, gap, UpdateScore, UpdateLevel, CurrentLevel}) =>
     const gridRef = useRef(initialGrid(rows, columns));
 
     const initialPosX = 5;
-    const initialPosY = -3;
+    const initialPosY = -2;
 
-    let lasttime = 0;
-    let accumulator = 0;
     let interval = 1000;
 
     const posXRef = useRef(initialPosX)
@@ -215,8 +213,7 @@ const Canvas = ({width, height, gap, UpdateScore, UpdateLevel, CurrentLevel}) =>
         removedrows.current += newremovedrows;
         if (removedrows.current > 10) {
             UpdateLevel(level => level + 1)
-
-            removedrows.current -= newremovedrows;
+            removedrows.current -= 10;
         }
         console.log("updatecount", removedrows.current)
     }
@@ -256,6 +253,9 @@ const Canvas = ({width, height, gap, UpdateScore, UpdateLevel, CurrentLevel}) =>
         const canvas = canvasRef.current
         const ctx = canvas.getContext('2d')
         let animationId;
+
+        let lasttime = 0;
+        let accumulator = 0;
 
         drawbackground(ctx, canvas)
 
