@@ -9,17 +9,20 @@ function App() {
     const gap = 2;
 
     const [score, setScore] = useState(0)
+    const [highScore, setHighScore] = useState(0)
     const [level, setLevel] = useState(0)
 
-    //Temp
     useEffect(() => {
-        console.log("currentlevel", level);
-    }, [level]);
+        if (score > highScore) {
+            setHighScore(score)
+        }
+    }, [score]);
 
     return (
         <>
             <Interface
                 score={score}
+                highScore={highScore}
                 level={level}
             />
             <Canvas
