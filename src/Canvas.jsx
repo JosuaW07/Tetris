@@ -1,4 +1,4 @@
-import React, {use, useEffect, useRef, useState} from 'react'
+import React, {useEffect, useRef} from 'react'
 
 const initialGrid = (rows, columns) => Array.from({length: rows}, () => Array(columns).fill(0))
 
@@ -14,7 +14,8 @@ const Canvas = ({width, height, gap, UpdateScore, UpdateLevel, CurrentLevel}) =>
     const initialPosX = 5;
     const initialPosY = -2;
 
-    let interval = 1000;
+    const initialInterval = 1000
+    const interval = useRef(initialInterval)
 
     const posXRef = useRef(initialPosX)
     const posYRef = useRef(initialPosY)
@@ -211,8 +212,11 @@ const Canvas = ({width, height, gap, UpdateScore, UpdateLevel, CurrentLevel}) =>
 
     const calcLevel = (newremovedrows) => {
         removedrows.current += newremovedrows;
-        if (removedrows.current > 10) {
-            UpdateLevel(level => level + 1)
+        if (removedrows.current >= 10) {
+            const newLevel = levelRef.current + 1
+
+            UpdateLevel(newLevel)
+            interval.current = initialInterval * Math.pow(0.9, newLevel);
             removedrows.current -= 10;
         }
         console.log("updatecount", removedrows.current)
@@ -268,10 +272,12 @@ const Canvas = ({width, height, gap, UpdateScore, UpdateLevel, CurrentLevel}) =>
             accumulator += deltatime;
 
 
-            if (accumulator > interval) {
+            if (accumulator > interval.current) {
                 moveBlock(0, 1)
-                accumulator -= interval;
+                accumulator -= interval.current;
             }
+            console.log("interval", interval.current);
+
 
             drawbackground(ctx, canvas, gridelementsize)
             drawgrid(ctx, gridelementsize)
