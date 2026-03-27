@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react'
-import './App.css'
+import "./mvp.css"
 import Canvas from "./Canvas.jsx";
 import Interface from "./Interface.jsx";
 
@@ -20,19 +20,23 @@ function App() {
 
     return (
         <>
-            <Interface
-                score={score}
-                highScore={highScore}
-                level={level}
-            />
-            <Canvas
-                width={canvaswidth}
-                height={canvaswidth * 2 - gap}
-                gap={gap}
-                UpdateScore={setScore}
-                UpdateLevel={setLevel}
-                CurrentLevel={level}
-            />
+            <section id="game-container">
+                <header>
+                    <Interface
+                        score={score}
+                        highScore={highScore}
+                        level={level}
+                    />
+                </header>
+                <Canvas
+                    width={canvaswidth}
+                    height={canvaswidth * 2 - gap}
+                    gap={gap}
+                    UpdateScore={setScore}
+                    UpdateLevel={setLevel}
+                    CurrentLevel={level}
+                />
+            </section>
         </>
     )
 }
