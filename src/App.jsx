@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react'
 import "./mvp.css"
 import Canvas from "./Canvas.jsx";
 import Interface from "./Interface.jsx";
+import Nextblock from "./Nextblock.jsx";
 
 
 function App() {
@@ -21,7 +22,9 @@ function App() {
     return (
         <>
             <section id="game-container">
-                <header>
+                <h1>Tetris</h1>
+                <div className="game-layout">
+                    <header id="interface">
                     <Interface
                         score={score}
                         highScore={highScore}
@@ -36,6 +39,8 @@ function App() {
                     UpdateLevel={setLevel}
                     CurrentLevel={level}
                 />
+                    <Nextblock/>
+                </div>
             </section>
         </>
     )
