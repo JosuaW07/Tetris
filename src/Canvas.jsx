@@ -6,9 +6,8 @@ const initialGrid = (rows, columns) => Array.from({length: rows}, () => Array(co
 const Canvas = ({width, height, gap, UpdateScore, UpdateLevel, CurrentLevel}) => {
 
     const columns = 10
-    const rows = 2 * columns
+    const rows = 20
     const canvasRef = useRef(null)
-    const gridelementsize = (width - gap * (columns + 1)) / columns
 
     const gridRef = useRef(initialGrid(rows, columns));
 
@@ -80,20 +79,7 @@ const Canvas = ({width, height, gap, UpdateScore, UpdateLevel, CurrentLevel}) =>
     const currentshapeRef = useRef(ishape)
     const shapes = [oshape, tshape, ishape, lshape, jshape, sshape, zshape]
 
-    const drawbackground = (ctx, canvas) => {
-        ctx.fillStyle = '#000000'
-        ctx.fillRect(0, 0, canvas.width, canvas.height)
 
-        for (let j = 0; j !== rows; j++) {
-            let posY = gap + j * (gap + gridelementsize)
-
-            for (let x = 0; x !== columns; x++) {
-                let posX = gap + x * (gap + gridelementsize)
-                ctx.fillStyle = '#303030'
-                ctx.fillRect(posX, posY, gridelementsize, gridelementsize)
-            }
-        }
-    }
 
     const blockcoloring = (isDrawing) => {
 
@@ -215,7 +201,6 @@ const Canvas = ({width, height, gap, UpdateScore, UpdateLevel, CurrentLevel}) =>
         let lasttime = 0;
         let accumulator = 0;
 
-        drawbackground(ctx, canvas)
 
 
         function update(currentTime) {
@@ -233,8 +218,7 @@ const Canvas = ({width, height, gap, UpdateScore, UpdateLevel, CurrentLevel}) =>
             console.log("interval", interval.current);
 
 
-            drawbackground(ctx, canvas, gridelementsize)
-            DrawGrid(ctx, gridelementsize, gap, gridRef.current)
+            DrawGrid(ctx, width, columns, rows, gap, gridRef.current, canvas)
 
             animationId = requestAnimationFrame(update);
         }

@@ -1,4 +1,20 @@
-export default function DrawGrid(ctx, gridsize, gap, grid) {
+export default function DrawGrid(ctx, width, columns, rows, gap, grid, canvas) {
+    const gridelementsize = (width - gap * (columns + 1)) / columns
+
+    ctx.fillStyle = '#000000'
+    ctx.fillRect(0, 0, canvas.width, canvas.height)
+
+    for (let j = 0; j !== rows; j++) {
+        let posY = gap + j * (gap + gridelementsize)
+
+        for (let x = 0; x !== columns; x++) {
+            let posX = gap + x * (gap + gridelementsize)
+            ctx.fillStyle = '#303030'
+            ctx.fillRect(posX, posY, gridelementsize, gridelementsize)
+        }
+    }
+
+
     grid.forEach((row, posY) => {
         row.forEach((colorcode, posX) => {
             let priColor, secColor
@@ -34,12 +50,12 @@ export default function DrawGrid(ctx, gridsize, gap, grid) {
                 secColor = "#8a0000"
             }
 
-            const gridposX = posX * (gridsize + gap);
-            const gridposY = posY * (gridsize + gap);
+            const gridposX = posX * (gridelementsize + gap);
+            const gridposY = posY * (gridelementsize + gap);
             ctx.fillStyle = secColor
-            ctx.fillRect(gridposX, gridposY, gridsize + 2 * gap, gridsize + 2 * gap)
+            ctx.fillRect(gridposX, gridposY, gridelementsize + 2 * gap, gridelementsize + 2 * gap)
             ctx.fillStyle = priColor
-            ctx.fillRect(gridposX + gap, gridposY + gap, gridsize, gridsize)
+            ctx.fillRect(gridposX + gap, gridposY + gap, gridelementsize, gridelementsize)
         })
     })
 }
