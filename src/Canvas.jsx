@@ -3,7 +3,7 @@ import DrawGrid from "./DrawGrid.js";
 
 const initialGrid = (rows, columns) => Array.from({length: rows}, () => Array(columns).fill(0))
 
-const Canvas = ({width, height, gap, UpdateScore, UpdateLevel, CurrentLevel}) => {
+const Canvas = ({width, height, gap, UpdateScore, UpdateLevel, CurrentLevel, Changeblock, newblock}) => {
 
     const columns = 10
     const rows = 20
@@ -19,66 +19,37 @@ const Canvas = ({width, height, gap, UpdateScore, UpdateLevel, CurrentLevel}) =>
 
     const posXRef = useRef(initialPosX)
     const posYRef = useRef(initialPosY)
-    const colorcodeRef = useRef(null)
 
     const removedrows = useRef(0)
     const levelRef = useRef(CurrentLevel)
+
+    const currentshapeRef = useRef(null)
+    const colorcodeRef = useRef(0)
+    const currentnameRef = useRef(null)
+
+    const spawnblock = () => {
+        console.log("spawn")
+        if (!newblock) return;
+
+        posXRef.current = initialPosX
+        posYRef.current = initialPosY
+
+        currentshapeRef.current = newblock.shape
+        colorcodeRef.current = newblock.color
+        currentnameRef.current = newblock.name
+
+        Changeblock()
+    }
+
+    useEffect(() => {
+        if (newblock && !currentshapeRef.current) {
+            spawnblock();
+        }
+    }, [newblock]);
+
     useEffect(() => {
         levelRef.current = CurrentLevel;
     }, [CurrentLevel]);
-
-    const tshape = [
-        {y: -1, x: 0},
-        {y: 0, x: -1},
-        {y: 0, x: 0},
-        {y: 0, x: +1}
-    ]
-
-    const oshape = [
-        {y: 0, x: 0},
-        {y: 0, x: 1},
-        {y: 1, x: 0},
-        {y: 1, x: 1},
-    ]
-
-    const ishape = [
-        {y: -2, x: 0},
-        {y: -1, x: 0},
-        {y: 0, x: 0},
-        {y: +1, x: 0},
-    ]
-
-    const lshape = [
-        {y: -1, x: 0},
-        {y: 0, x: 0},
-        {y: 1, x: 0},
-        {y: 1, x: 1}
-    ];
-
-    const jshape = [
-        {y: -1, x: 0},
-        {y: 0, x: 0},
-        {y: 1, x: 0},
-        {y: 1, x: -1}
-    ];
-
-    const sshape = [
-        {y: 0, x: 0},
-        {y: 0, x: 1},
-        {y: 1, x: 0},
-        {y: 1, x: -1}
-    ];
-
-    const zshape = [
-        {y: 0, x: 0},
-        {y: 0, x: -1},
-        {y: 1, x: 0},
-        {y: 1, x: 1}
-    ];
-
-    const currentshapeRef = useRef(ishape)
-    const shapes = [oshape, tshape, ishape, lshape, jshape, sshape, zshape]
-
 
 
     const blockcoloring = (isDrawing) => {
@@ -86,6 +57,7 @@ const Canvas = ({width, height, gap, UpdateScore, UpdateLevel, CurrentLevel}) =>
         const colorCode = isDrawing ? colorcodeRef.current : 0;
 
         currentcoordinates().forEach((coordinate) => {
+            if (!currentshapeRef.current) return;
             if (gridRef.current[coordinate.y] !== undefined) {
                 gridRef.current[coordinate.y][coordinate.x] = colorCode
             }
@@ -104,17 +76,17 @@ const Canvas = ({width, height, gap, UpdateScore, UpdateLevel, CurrentLevel}) =>
             checkgrid()
             if (currentcoordinates().some(coordinate => coordinate.y <= 0)) {
                 gameover()
-                changeblock()
+                spawnblock()
             } else {
-                changeblock()
+                Changeblock()
+                currentshapeRef.current = null
+                spawnblock()
             }
         }
         blockcoloring(true)
     }
 
     const gameover = () => {
-        posXRef.current = initialPosX;
-        posYRef.current = initialPosY;
         gridRef.current = initialGrid(rows, columns);
         UpdateScore(0);
         UpdateLevel(0)
@@ -159,19 +131,14 @@ const Canvas = ({width, height, gap, UpdateScore, UpdateLevel, CurrentLevel}) =>
             interval.current = initialInterval * Math.pow(0.9, newLevel);
             removedrows.current -= 10;
         }
-        console.log("updatecount", removedrows.current)
     }
 
-    const changeblock = () => {
-        const randomindex = (Math.floor(Math.random() * shapes.length))
-        currentshapeRef.current = shapes[randomindex]
-        posYRef.current = -3;
-        posXRef.current = 5;
-        colorcodeRef.current = randomindex + 1;
-    }
+
 
     const rotateShape = () => {
-        if (currentshapeRef.current !== oshape) {
+        if (!currentshapeRef.current || currentnameRef.current === "O") {
+            return;
+        }
             blockcoloring(false)
             const rotated = currentshapeRef.current.map(block => ({
                     x: -block.y,
@@ -180,10 +147,11 @@ const Canvas = ({width, height, gap, UpdateScore, UpdateLevel, CurrentLevel}) =>
             );
 
             moveBlock(0, 0, rotated);
-        }
+
     }
 
     const currentcoordinates = () => {
+        if (!currentshapeRef.current) return [];
         return currentshapeRef.current.map(block => ({
             x: block.x + posXRef.current,
             y: block.y + posYRef.current,
@@ -193,7 +161,7 @@ const Canvas = ({width, height, gap, UpdateScore, UpdateLevel, CurrentLevel}) =>
 
 
     useEffect(() => {
-        changeblock()
+        spawnblock()
         const canvas = canvasRef.current
         const ctx = canvas.getContext('2d')
         let animationId;
@@ -215,7 +183,6 @@ const Canvas = ({width, height, gap, UpdateScore, UpdateLevel, CurrentLevel}) =>
                 moveBlock(0, 1)
                 accumulator -= interval.current;
             }
-            console.log("interval", interval.current);
 
 
             DrawGrid(ctx, width, columns, rows, gap, gridRef.current, canvas)
