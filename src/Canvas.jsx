@@ -38,7 +38,6 @@ const Canvas = ({width, height, gap, UpdateScore, UpdateLevel, CurrentLevel, Cha
         colorcodeRef.current = newblock.color
         currentnameRef.current = newblock.name
 
-        Changeblock()
     }
 
     useEffect(() => {

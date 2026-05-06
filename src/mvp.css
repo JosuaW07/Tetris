@@ -499,3 +499,9 @@ canvas {
 #interface {
     align-items: flex-end;
 }
+
+.nextblockallignment {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}

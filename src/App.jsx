@@ -34,14 +34,13 @@ function App() {
             const [, ...rest] = prev;
             return prev = [...rest, newblock]
         })
+        console.log("changeblock")
     }
-
-
-
 
 
     useEffect(() => {
         const initalblocks = [
+            generateblock(),
             generateblock(),
             generateblock(),
             generateblock()
@@ -140,10 +139,20 @@ function App() {
                         newblock={blocks[0]}
                         Changeblock={changeblock}
                     />
-                    <Nextblock
-                        gap={gap}
-                        newblock={blocks[1]}
-                    />
+                    <div className="nextblockallignment">
+                        <Nextblock
+                            gap={gap}
+                            newblock={blocks[1]}
+                        />
+                        <Nextblock
+                            gap={gap}
+                            newblock={blocks[2]}
+                        />
+                        <Nextblock
+                            gap={gap}
+                            newblock={blocks[3]}
+                        />
+                    </div>
                 </div>
             </section>
         </>

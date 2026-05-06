@@ -56,7 +56,6 @@ export default function Nextblock({gap, newblock}) {
 
     return (
         <>
-            <h2>Nextblock</h2>
             <canvas ref={canvasRef} width={width} height={height}/>
         </>
     )
