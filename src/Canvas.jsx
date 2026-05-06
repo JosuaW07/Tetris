@@ -139,6 +139,7 @@ const Canvas = ({width, height, gap, UpdateScore, UpdateLevel, CurrentLevel, Cha
         if (!currentshapeRef.current || currentnameRef.current === "O") {
             return;
         }
+        console.log(currentnameRef.current)
             blockcoloring(false)
             const rotated = currentshapeRef.current.map(block => ({
                     x: -block.y,

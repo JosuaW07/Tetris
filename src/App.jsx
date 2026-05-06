@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import "./mvp.css"
 import Canvas from "./Canvas.jsx";
 import Interface from "./Interface.jsx";
@@ -14,24 +14,41 @@ function App() {
     const [highScore, setHighScore] = useState(0)
     const [level, setLevel] = useState(0)
 
-    const [newblock, setnewblock] = useState(null)
 
+    const [blocks, setBlocks] = useState([])
 
-    const changeblock = () => {
+    const generateblock = () => {
         const randomname = shapelist[Math.floor(Math.random() * shapelist.length)];
         const shapedata = shapes[randomname];
         const shapecolor = shapelist.indexOf(randomname) + 1;
-        setnewblock({
+        return ({
             shape: shapedata,
             color: shapecolor,
             name: randomname
-
         })
     }
 
+    const changeblock = () => {
+        const newblock = generateblock()
+        setBlocks(prev => {
+            const [, ...rest] = prev;
+            return prev = [...rest, newblock]
+        })
+    }
+
+
+
+
+
     useEffect(() => {
-        changeblock()
+        const initalblocks = [
+            generateblock(),
+            generateblock(),
+            generateblock()
+        ]
+        setBlocks(initalblocks)
     }, [])
+
 
     useEffect(() => {
         if (score > highScore) {
@@ -48,7 +65,7 @@ function App() {
                     {y: 0, x: +1}
                 ],
 
-            o:
+        O:
                 [
                     {y: 0, x: 0},
                     {y: 0, x: 1},
@@ -120,11 +137,12 @@ function App() {
                         UpdateScore={setScore}
                         UpdateLevel={setLevel}
                         CurrentLevel={level}
-                        newblock={newblock}
+                        newblock={blocks[0]}
                         Changeblock={changeblock}
                     />
                     <Nextblock
                         gap={gap}
+                        newblock={blocks[1]}
                     />
                 </div>
             </section>
