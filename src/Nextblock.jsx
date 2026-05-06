@@ -6,8 +6,8 @@ const initialGrid = (rows, columns) => Array.from({length: rows}, () => Array(co
 export default function Nextblock({gap, newblock}) {
     const width = 100;
     const height = width;
-    const columns = 6;
-    const rows = columns;
+    const columns = 4;
+    const rows = 4;
     const canvasRef = useRef(null)
     const gridRef = useRef(initialGrid(rows, columns));
     const colorcodeRef = useRef(0)
