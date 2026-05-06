@@ -1,5 +1,8 @@
 import React, {useEffect, useRef} from 'react'
 import DrawGrid from "./DrawGrid.js";
+import blocklanding from "./assets/long.mp3";
+import deleterow from "./assets/short.mp3"
+import useSound from "use-sound";
 
 const initialGrid = (rows, columns) => Array.from({length: rows}, () => Array(columns).fill(0))
 
@@ -26,6 +29,19 @@ const Canvas = ({width, height, gap, UpdateScore, UpdateLevel, CurrentLevel, Cha
     const currentshapeRef = useRef(null)
     const colorcodeRef = useRef(0)
     const currentnameRef = useRef(null)
+
+
+    const shortSoundRef = useRef();
+    const longSoundRef = useRef();
+
+    const [playblocklanding] = useSound(blocklanding);
+    const [playdeleterow] = useSound(deleterow);
+
+    useEffect(() => {
+        shortSoundRef.current = playblocklanding;
+        longSoundRef.current = playdeleterow;
+    }, [playblocklanding, playdeleterow]);
+
 
     const spawnblock = () => {
         console.log("spawn")
@@ -72,6 +88,10 @@ const Canvas = ({width, height, gap, UpdateScore, UpdateLevel, CurrentLevel, Cha
             currentshapeRef.current = newShape;
         } else if (downmovement > 0) {
             blockcoloring(true)
+
+            if (shortSoundRef.current) {
+                shortSoundRef.current();
+            }
             checkgrid()
             if (currentcoordinates().some(coordinate => coordinate.y <= 0)) {
                 gameover()
@@ -109,6 +129,14 @@ const Canvas = ({width, height, gap, UpdateScore, UpdateLevel, CurrentLevel, Cha
             const removedrows = rows - newgrid.length
             calcScore(removedrows)
             calcLevel(removedrows)
+            for (let i = 0; i <= removedrows; i++) {
+                setTimeout(() => {
+                    if (longSoundRef.current) {
+                        longSoundRef.current();
+                    }
+                }, i * 100
+                )
+            }
             const emmtyrows = Array.from({length: removedrows}, () => Array(columns).fill(0))
 
             gridRef.current = [...emmtyrows, ...newgrid]
@@ -133,20 +161,19 @@ const Canvas = ({width, height, gap, UpdateScore, UpdateLevel, CurrentLevel, Cha
     }
 
 
-
     const rotateShape = () => {
         if (!currentshapeRef.current || currentnameRef.current === "O") {
             return;
         }
         console.log(currentnameRef.current)
-            blockcoloring(false)
-            const rotated = currentshapeRef.current.map(block => ({
-                    x: -block.y,
-                    y: block.x
-                })
-            );
+        blockcoloring(false)
+        const rotated = currentshapeRef.current.map(block => ({
+                x: -block.y,
+                y: block.x
+            })
+        );
 
-            moveBlock(0, 0, rotated);
+        moveBlock(0, 0, rotated);
 
     }
 
@@ -168,7 +195,6 @@ const Canvas = ({width, height, gap, UpdateScore, UpdateLevel, CurrentLevel, Cha
 
         let lasttime = 0;
         let accumulator = 0;
-
 
 
         function update(currentTime) {
