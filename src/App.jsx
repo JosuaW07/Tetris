@@ -112,42 +112,44 @@ function App() {
 
     return (
         <>
-            <section id="game-container">
-                <h1>Tetris</h1>
-                <div className="game-layout">
-                    <header id="interface">
-                        <Interface
-                            score={score}
-                            highScore={highScore}
-                            level={level}
-                        />
-                    </header>
-                    <Canvas
-                        width={canvaswidth}
-                        height={canvaswidth * 2 - gap}
-                        gap={gap}
-                        UpdateScore={setScore}
-                        UpdateLevel={setLevel}
-                        CurrentLevel={level}
-                        newblock={blocks[0]}
-                        Changeblock={changeblock}
-                    />
-                    <div className="nextblockallignment">
-                        <Nextblock
+            <div className="event-container">
+                <section id="game-container">
+                    <h1>Tetris</h1>
+                    <div className="game-layout">
+                        <header id="interface">
+                            <Interface
+                                score={score}
+                                highScore={highScore}
+                                level={level}
+                            />
+                        </header>
+                        <Canvas
+                            width={canvaswidth}
+                            height={canvaswidth * 2 - gap}
                             gap={gap}
-                            newblock={blocks[1]}
+                            UpdateScore={setScore}
+                            UpdateLevel={setLevel}
+                            CurrentLevel={level}
+                            newblock={blocks[0]}
+                            Changeblock={changeblock}
                         />
-                        <Nextblock
-                            gap={gap}
-                            newblock={blocks[2]}
-                        />
-                        <Nextblock
-                            gap={gap}
-                            newblock={blocks[3]}
-                        />
+                        <div className="nextblockallignment">
+                            <Nextblock
+                                gap={gap}
+                                newblock={blocks[1]}
+                            />
+                            <Nextblock
+                                gap={gap}
+                                newblock={blocks[2]}
+                            />
+                            <Nextblock
+                                gap={gap}
+                                newblock={blocks[3]}
+                            />
+                        </div>
                     </div>
-                </div>
-            </section>
+                </section>
+            </div>
         </>
     )
 }

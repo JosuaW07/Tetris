@@ -1,7 +1,7 @@
 export default function DrawGrid(ctx, width, columns, rows, gap, grid, canvas) {
     const gridelementsize = (width - gap * (columns + 1)) / columns
 
-    ctx.fillStyle = '#000000'
+    ctx.fillStyle = '#0048ff'
     ctx.fillRect(0, 0, canvas.width, canvas.height)
 
     for (let j = 0; j !== rows; j++) {
@@ -9,7 +9,7 @@ export default function DrawGrid(ctx, width, columns, rows, gap, grid, canvas) {
 
         for (let x = 0; x !== columns; x++) {
             let posX = gap + x * (gap + gridelementsize)
-            ctx.fillStyle = '#303030'
+            ctx.fillStyle = '#000000'
             ctx.fillRect(posX, posY, gridelementsize, gridelementsize)
         }
     }
@@ -22,32 +22,32 @@ export default function DrawGrid(ctx, width, columns, rows, gap, grid, canvas) {
                 return
             }
             if (colorcode === 1) {
-                priColor = "#fae827"
-                secColor = "#a59805"
+                priColor = "#ffff00"
+                secColor = "#9a9a00"
             }
             if (colorcode === 2) {
-                priColor = "#b128ff"
-                secColor = "#670280"
+                priColor = "#ff00ff"
+                secColor = "#8b008b"
             }
             if (colorcode === 3) {
-                priColor = "#0dd1b0"
-                secColor = "#1d6ff4"
+                priColor = "#00ffff"
+                secColor = "#008b8b"
             }
             if (colorcode === 4) {
-                priColor = "#f8c700"
-                secColor = "#b5780f"
+                priColor = "#ffaa00"
+                secColor = "#916100"
             }
             if (colorcode === 5) {
-                priColor = "#2462ff"
-                secColor = "#020e8e"
+                priColor = "#0066ff"
+                secColor = "#002db3"
             }
             if (colorcode === 6) {
-                priColor = "#53ff00"
-                secColor = "#004e00"
+                priColor = "#00ff00"
+                secColor = "#006400"
             }
             if (colorcode === 7) {
-                priColor = "#ff0000"
-                secColor = "#8a0000"
+                priColor = "#ff0033"
+                secColor = "#80001a"
             }
 
             const gridposX = posX * (gridelementsize + gap);
