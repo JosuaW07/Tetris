@@ -186,56 +186,109 @@ const Canvas = ({width, height, gap, UpdateScore, UpdateLevel, CurrentLevel, Cha
         }));
     }
 
+    const keypress = useRef({})
+    const lastInputTime = useRef({a: 0, d: 0, s: 0, rotate: 0});
 
     useEffect(() => {
-        spawnblock()
-        const canvas = canvasRef.current
-        const ctx = canvas.getContext('2d')
-        let animationId;
 
-        let lasttime = 0;
-        let accumulator = 0;
+        const moveCooldown = 120;
 
-
-        function update(currentTime) {
-            if (!lasttime) lasttime = currentTime;
-            let deltatime = (currentTime - lasttime);
-            lasttime = currentTime;
-
-            accumulator += deltatime;
-
-
-            if (accumulator > interval.current) {
-                moveBlock(0, 1)
-                accumulator -= interval.current;
-            }
-
-
-            DrawGrid(ctx, width, columns, rows, gap, gridRef.current, canvas)
-
-            animationId = requestAnimationFrame(update);
-        }
-
-        animationId = requestAnimationFrame(update);
-
-        return () => {
-            cancelAnimationFrame(animationId);
-        }
-    }, [])
-    useEffect(() => {
-        const handleKey = (e) => {
-            if (e.key.toLowerCase() === "a") moveBlock(-1, 0);
-            if (e.key.toLowerCase() === "d") moveBlock(+1, 0);
-            if (e.key === " " || e.key.toLowerCase() === "w") rotateShape();
-            if (e.key.toLowerCase() === "s") moveBlock(0, +1)
+        const handleKeyDown = (e) => {
+            const key = e.key.toLowerCase();
+            keypress.current[key] = true;
         };
 
-        window.addEventListener('keydown', handleKey);
+        const handleKeyUp = (e) => {
+            const key = e.key.toLowerCase();
+            keypress.current[key] = false;
+
+            if (key === " " || key === "w") {
+                lastInputTime.current.rotate = 0;
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+        window.addEventListener('keyup', handleKeyUp);
+
 
         return () => {
-            window.removeEventListener('keydown', handleKey);
+            window.removeEventListener('keydown', handleKeyDown);
+            window.removeEventListener('keyup', handleKeyUp);
         };
     }, []);
+
+
+    useEffect(() => {
+            spawnblock()
+            const canvas = canvasRef.current
+            const ctx = canvas.getContext('2d')
+            let animationId;
+
+            let lasttime = 0;
+            let accumulator = 0;
+
+
+            function update(currentTime) {
+
+                const cooldown = 90
+
+
+                if (keypress.current["a"]) {
+                    if (currentTime - lastInputTime.current.a > cooldown) {
+                        moveBlock(-1, 0);
+                        lastInputTime.current.a = currentTime;
+                    }
+                }
+
+                if (keypress.current["d"]) {
+                    if (currentTime - lastInputTime.current.d > cooldown) {
+                        moveBlock(1, 0);
+                        lastInputTime.current.d = currentTime;
+                    }
+                }
+                if (keypress.current["s"]) {
+                    if (currentTime - lastInputTime.current.s > cooldown) {
+                        moveBlock(0, 1);
+                        lastInputTime.current.s = currentTime;
+                    }
+                }
+                if (keypress.current["w"]) {
+                    if (lastInputTime.current.rotate === 0) {
+                        rotateShape();
+                        lastInputTime.current.rotate = 1;
+                    }
+                }
+
+                if (keypress.current[" "]) {
+
+                }
+
+
+                if (!lasttime) lasttime = currentTime;
+                let deltatime = (currentTime - lasttime);
+                lasttime = currentTime;
+
+                accumulator += deltatime;
+
+
+                if (accumulator > interval.current) {
+                    moveBlock(0, 1)
+                    accumulator -= interval.current;
+                }
+
+
+                DrawGrid(ctx, width, columns, rows, gap, gridRef.current, canvas)
+
+                animationId = requestAnimationFrame(update);
+            }
+
+            animationId = requestAnimationFrame(update);
+
+            return () => {
+                cancelAnimationFrame(animationId);
+            }
+        }, []
+    )
 
 
     return <canvas ref={canvasRef} width={width} height={height}/>
