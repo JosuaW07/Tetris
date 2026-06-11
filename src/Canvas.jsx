@@ -81,8 +81,10 @@ const Canvas = ({width, height, gap, UpdateScore, UpdateLevel, CurrentLevel, Cha
     }
 
     const moveBlock = (sidemovement, downmovement, newShape = currentshapeRef.current) => {
+        if (!newShape) return;
         blockcoloring(false)
         if (ismovevalide(sidemovement, downmovement, newShape)) {
+            if (!newShape) return false;
             posXRef.current += sidemovement;
             posYRef.current += downmovement;
             currentshapeRef.current = newShape;
@@ -103,6 +105,25 @@ const Canvas = ({width, height, gap, UpdateScore, UpdateLevel, CurrentLevel, Cha
             }
         }
         blockcoloring(true)
+    }
+
+    const harddrop = () => {
+        if (!currentshapeRef.current) return;
+
+        blockcoloring(false);
+
+        let distance = 0;
+
+        while (ismovevalide(0, distance + 1, currentshapeRef.current)) {
+            distance++;
+        }
+
+        if (distance > 0) {
+            posYRef.current += distance;
+        }
+
+        blockcoloring(true);
+        moveBlock(0, 1)
     }
 
     const gameover = () => {
@@ -187,7 +208,7 @@ const Canvas = ({width, height, gap, UpdateScore, UpdateLevel, CurrentLevel, Cha
     }
 
     const keypress = useRef({})
-    const lastInputTime = useRef({a: 0, d: 0, s: 0, rotate: 0});
+    const lastInputTime = useRef({a: 0, d: 0, s: 0, rotate: 0, harddrop: 0});
 
     useEffect(() => {
 
@@ -202,8 +223,12 @@ const Canvas = ({width, height, gap, UpdateScore, UpdateLevel, CurrentLevel, Cha
             const key = e.key.toLowerCase();
             keypress.current[key] = false;
 
-            if (key === " " || key === "w") {
+            if (key === "w") {
                 lastInputTime.current.rotate = 0;
+            }
+
+            if (key === " ") {
+                lastInputTime.current.harddrop = 0;
             }
         };
 
@@ -260,7 +285,10 @@ const Canvas = ({width, height, gap, UpdateScore, UpdateLevel, CurrentLevel, Cha
                 }
 
                 if (keypress.current[" "]) {
-
+                    if (lastInputTime.current.harddrop === 0) {
+                        harddrop()
+                        lastInputTime.current.harddrop = 1;
+                    }
                 }
 
 
